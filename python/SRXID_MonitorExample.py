@@ -21,4 +21,5 @@ PV_ValuesToRecord = [
 # Forever get your variables
 while True:
   print GetVars(PV_ValuesToRecord)
+  print GetVars(PV_TEMPERATURES)
   time.sleep(1)

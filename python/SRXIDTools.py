@@ -42,6 +42,26 @@ PV_MOVN_DS_UPPER  = DEV + '{' + SYS + '-Mtr:2}Pos.MOVN'
 PV_MOVN_DS_LOWER  = DEV + '{' + SYS + '-Mtr:4}Pos.MOVN'
 PV_MOVN_ELEVATION = DEV + '{' + SYS + '-Mtr:1}Pos.MOVN'
 
+# List of temperature PVs
+PV_TEMPERATURES = [
+  DEV + '{' + SYS + '-Pt:1}T',
+  DEV + '{' + SYS + '-Pt:2}T',
+  DEV + '{' + SYS + '-Pt:3}T',
+  DEV + '{' + SYS + '-Pt:4}T',
+  DEV + '{' + SYS + '-Pt:5}T',
+  DEV + '{' + SYS + '-Pt:6}T',
+  DEV + '{' + SYS + '-Pt:7}T',
+  DEV + '{' + SYS + '-Pt:8}T',
+  DEV + '{' + SYS + '-Pt:9}T',
+  DEV + '{' + SYS + '-Pt:10}T',
+  DEV + '{' + SYS + '-Pt:11}T',
+  DEV + '{' + SYS + '-Pt:12}T',
+  DEV + '{' + SYS + '-Pt:13}T',
+  DEV + '{' + SYS + '-Pt:14}T',
+  DEV + '{' + SYS + '-Pt:15}T',
+  DEV + '{' + SYS + '-Pt:16}T'
+]
+
 
 
 
