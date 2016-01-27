@@ -89,12 +89,17 @@ def MoveDeviceTo (Moves):
      unchecked here.  Please do not hit the limit.
      """
 
+  print Moves
+
   # Loop over each move command
   for move in Moves:
 
     # Which axis and position
     axis     = move[0]
     position = move[1]
+
+    print move
+    exit(0)
 
     # Select which axis and put position and go variables.  There is extra sleep due to vendor misuse
     # of motor records.  Sorry about that.
@@ -202,7 +207,7 @@ def MoveDeviceIncremental (Moves):
 
 
     # Do the move with the newly computed position
-    MoveDeviceTo( [axis, Position] )
+    MoveDeviceTo( [[axis, Position]] )
 
   return
 
