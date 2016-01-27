@@ -21,8 +21,14 @@ PV_POSITION_US_LOWER = DEV + '{' + SYS + '}REAL_POSITION_US_LOWER'
 PV_POSITION_DS_UPPER = DEV + '{' + SYS + '}REAL_POSITION_DS_UPPER'
 PV_POSITION_DS_LOWER = DEV + '{' + SYS + '}REAL_POSITION_DS_LOWER'
 
+# elcoder elevation readings
 PV_US_ENCODER = DEV + '{' + SYS +'-LEnc:1}Pos'
 PV_DS_ENCODER = DEV + '{' + SYS +'-LEnc:6}Pos'
+
+# Elevation PVs
+PV_ELEVATION_US  =  DEV + '{' + SYS + '}REAL_ELEVATION_US'
+PV_ELEVATION_DS  =  DEV + '{' + SYS + '}REAL_ELEVATION_DS'
+PV_ELEVATION_AVG =  DEV + '{' + SYS + '}REAL_ELEVATION_AVG'
 
 # Position setpoint PVs
 PV_SETPOINT_US_UPPER  = DEV + '{' + SYS + '-Mtr:6}Inp:Pos'
