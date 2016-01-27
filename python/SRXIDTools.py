@@ -47,7 +47,18 @@ PV_MOVN_ELEVATION = DEV + '{' + SYS + '-Mtr:1}Pos.MOVN'
 
 
 def MoveDeviceTo (Moves):
-  """Move any axes to specific locations in a specific order."""
+  """Move any axes to specific locations in a specific order.
+     The input is a list of pairs which are 'moves'.  Each pair is a list containing
+     the axis and the absolute position to move to.  The axis labels are as follows:
+       USU - Upstream Upper
+       USL - Upstream Lower
+       DSU - Downstream Upper
+       DSL - Downstream Lower
+       ELE - Elevation
+
+     The list is processed in order.  Be aware that there is a girder tilt limit.  It is
+     unchecked here.  Please do not hit the limit.
+     """
 
   # Loop over each move command
   for move in Moves:
@@ -116,7 +127,18 @@ def MoveDeviceTo (Moves):
 
 
 def MoveDeviceIncremental (Moves):
-  """Move any axis a specified distance."""
+  """Move any axes a specified distance in a specific order.
+     The input is a list of pairs which are 'moves'.  Each pair is a list containing
+     the axis and the relative distance to move.  The axis labels are as follows:
+       USU - Upstream Upper
+       USL - Upstream Lower
+       DSU - Downstream Upper
+       DSL - Downstream Lower
+       ELE - Elevation
+
+     The list is processed in order.  Be aware that there is a girder tilt limit.  It is
+     unchecked here.  Please do not hit the limit.
+     """
 
   for move in Moves:
     axis     = move[0]
@@ -164,6 +186,8 @@ def MoveDeviceIncremental (Moves):
 
 
 def GetVars (Vars):
+  """caget a list of cariables and return a list of results"""
+
   Vals = []
   for pv in Vars:
     Vals.append(caget(pv))
