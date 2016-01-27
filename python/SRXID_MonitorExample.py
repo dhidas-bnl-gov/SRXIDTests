@@ -14,7 +14,9 @@ PV_ValuesToRecord = [
                       PV_POSITION_US_LOWER,
                       PV_POSITION_DS_UPPER,
                       PV_POSITION_DS_LOWER,
-                      PV_POSITION_ELEVATION
+                      PV_ELEVATION_US,
+                      PV_ELEVATION_DS,
+                      PV_ELEVATION_AVG,
                     ]
 
 
