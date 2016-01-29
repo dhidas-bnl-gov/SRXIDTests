@@ -90,29 +90,12 @@ def MoveDeviceTo (USU, USL, DSU, DSL, ELE):
      We will crab our way there if needed minding the PV_GIRDER_TILT_LIMIT and CRAB_LIMIT.
      I use USE and not DSE because it is just along for the ride (no feedback)"""
 
-  # Grab current positions
-  Starting_USU = caget(PV_POSITION_US_UPPER)
-  Starting_USL = caget(PV_POSITION_US_LOWER)
-  Starting_DSU = caget(PV_POSITION_DS_UPPER)
-  Starting_DSL = caget(PV_POSITION_DS_LOWER)
-  Starting_USE = caget(PV_ELEVATION_US)
-
-  # Calculate difference from current to desired (desire - current)
-  Diff_USU = USU - Starting_USU
-  Diff_USL = USL - Starting_USL
-  Diff_DSU = DSU - Starting_DSU
-  Diff_DSL = DSL - Starting_DSL
-  Diff_USE = DSL - Starting_USE
-
-  # Calculate tilt of each girder
-  Starting_Tilt_U = Starting_USU - Starting_DSU
-  Starting_Tilt_L = Starting_USL - Starting_DSL
-
-  # Variables to use for motion sequence
-  This_USU = Starting_USU
-  This_USL = Starting_USL
-  This_DSU = Starting_DSU
-  This_DSL = Starting_DSL
+  # Grab current positions.  Variables to be used in calculation.
+  This_USU = caget(PV_POSITION_US_UPPER)
+  This_USL = caget(PV_POSITION_US_LOWER)
+  This_DSU = caget(PV_POSITION_DS_UPPER)
+  This_DSL = caget(PV_POSITION_DS_LOWER)
+  This_USE = caget(PV_ELEVATION_US)
 
   # Did we finish the crab walk calculation for each axis?
   Finished = [0, 0, 0, 0]
@@ -178,7 +161,7 @@ def MoveDeviceTo (USU, USL, DSU, DSL, ELE):
         Finished[3] = 1
 
   # Don't forget about elevation
-  if abs(ELE - caget(PV_ELEVATION_US) > 0.010:
+  if abs(ELE - ThisUSE) > 0.010:
     Moves.append(['ELE', ELE])
   print Moves
 
