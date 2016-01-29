@@ -3,13 +3,24 @@
 from SRXIDTools import *
 
 
+MoveDeviceTo(10.000, 10.000, 10.000, 10.000, 0.127)
+MoveDeviceTo(10.120, 10.120, 10.120, 10.120, None)
 
-# Move to specified location
+AddToTaper(0.04)
+AddToTilt(0.02)
+
+SetTaper(0.010)
+SetTilt(0.010)
+
+SetTaper(0.000)
+SetTilt(0.000)
+
+# Move to specified locations
 Moves = [ 
-          ['USU', 19.990],
-          ['USL', 19.990],
-          ['DSU', 19.990],
-          ['DSL', 19.990],
+          ['USU',  9.990],
+          ['USL',  9.990],
+          ['DSU',  9.990],
+          ['DSL',  9.990],
           ['USU', 20.000],
           ['USL', 20.000],
           ['DSU', 20.000],
@@ -19,7 +30,7 @@ MoveDeviceSequence(Moves)
 
 
 
-# Move incremental amount
+# Move incremental amounts
 MovesIncremental = [ 
           ['USU', -0.010],
           ['USL', -0.010],
