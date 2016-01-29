@@ -90,20 +90,30 @@ def MoveDeviceTo (USU, USL, DSU, DSL, ELE):
      We will crab our way there if needed minding the PV_GIRDER_TILT_LIMIT and CRAB_LIMIT.
      I use USE and not DSE because it is just along for the ride (no feedback)"""
 
-  # Grab current positions.  Variables to be used in calculation.
-  This_USU = caget(PV_POSITION_US_UPPER)
-  This_USL = caget(PV_POSITION_US_LOWER)
-  This_DSU = caget(PV_POSITION_DS_UPPER)
-  This_DSL = caget(PV_POSITION_DS_LOWER)
-  This_USE = caget(PV_ELEVATION_US)
+  # Grab starting positions.
+  Starting_USU = caget(PV_POSITION_US_UPPER)
+  Starting_USL = caget(PV_POSITION_US_LOWER)
+  Starting_DSU = caget(PV_POSITION_DS_UPPER)
+  Starting_DSL = caget(PV_POSITION_DS_LOWER)
+  Starting_USE = caget(PV_ELEVATION_US)
+
+  # Variables to be used in calculation.
+  This_USU = Starting_USU
+  This_USL = Starting_USL
+  This_DSU = Starting_DSU
+  This_DSL = Starting_DSL
+  This_USE = Starting_USE
 
   # Did we finish the crab walk calculation for each axis?
   Finished = [0, 0, 0, 0]
 
+  # The calculated moves that we will pass to the MoveDeviceSequence routine
+  Moves = []
+
   # Calculate the moves using a max crab
   while sum(Finished) != 4:
     if not Finished[0]:
-      if abs(This_DSU - This_USU) < CRAB_LIMIT:
+      if abs(This_DSU - USU) < CRAB_LIMIT:
         This_USU = USU
         Finished[0] = 1
       else:
@@ -114,7 +124,7 @@ def MoveDeviceTo (USU, USL, DSU, DSL, ELE):
       Moves.append(['USU', This_USU])
 
     if not Finished[1]:
-      if abs(This_DSU - This_USU) < CRAB_LIMIT:
+      if abs(DSU - This_USU) < CRAB_LIMIT:
         This_DSU = DSU
         Finished[1] = 1
       else:
@@ -125,7 +135,7 @@ def MoveDeviceTo (USU, USL, DSU, DSL, ELE):
       Moves.append(['DSU', This_DSU])
 
     if not Finished[2]:
-      if abs(This_DSL - This_USL) < CRAB_LIMIT:
+      if abs(This_DSL - USL) < CRAB_LIMIT:
         This_USL = USL
         Finished[2] = 1
       else:
@@ -136,7 +146,7 @@ def MoveDeviceTo (USU, USL, DSU, DSL, ELE):
       Moves.append(['USL', This_USL])
 
     if not Finished[3]:
-      if abs(This_DSL - This_USL) < CRAB_LIMIT:
+      if abs(DSL - This_USL) < CRAB_LIMIT:
         This_DSL = DSL
         Finished[3] = 1
       else:
@@ -161,10 +171,11 @@ def MoveDeviceTo (USU, USL, DSU, DSL, ELE):
         Finished[3] = 1
 
   # Don't forget about elevation
-  if abs(ELE - ThisUSE) > 0.010:
+  if abs(ELE - This_USE) > 0.010:
     Moves.append(['ELE', ELE])
-  print Moves
 
+  for move in Moves:
+    print move
 
   return
 
@@ -175,7 +186,7 @@ def MoveDeviceTo (USU, USL, DSU, DSL, ELE):
 
 
 
-def MoveDeviceTo (Moves):
+def MoveDeviceSequence (Moves):
   """Move any axes to specific locations in a specific order.
      The input is a list of pairs which are 'moves'.  Each pair is a list containing
      the axis and the absolute position to move to.  The axis labels are as follows:
@@ -188,7 +199,7 @@ def MoveDeviceTo (Moves):
      The list is processed in order.  Be aware that there is a girder tilt limit.  It is
      unchecked here.  Please do not hit the limit.
      """
-
+  exit(0)
 
   # Loop over each move command
   for move in Moves:
