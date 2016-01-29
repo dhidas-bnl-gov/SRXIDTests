@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from cothread.catools import caget, caput
-#from epics import caget, caput
+#from cothread.catools import caget, caput
+from epics import caget, caput
 
 import time
 
@@ -80,12 +80,83 @@ PV_TEMPERATURES = [
 
 
 
+def SetTilt (IN):
+  """Set the tilt of the device leaving gap and taper unchanged"""
+
+  return
 
 
+def SetTaper (IN):
+  """Set the taper of the device keeping the gap and tilt unchanged"""
+
+  # That is just easier
+  QuarterTaper = IN / 4.0
+
+  # Half of gap average
+  GapHalf = caget(PV_GAP_AVG) / 2.0
+
+  # Half of the tilt average
+  HalfTilt = (caget(PV_GAP_DS) - caget(PV_GAP_US)) / 2.0
+
+  # Move the device
+  MoveDeviceTo(GapHalf - QuarterTaper - HalfTilt,
+               GapHalf - QuarterTaper + HalfTilt,
+               GapHalf + QuarterTaper + HalfTilt,
+               GapHalf + QuarterTaper - HalfTilt,
+               None)
+
+  return
 
 
+def AddToTilt (IN):
+  """Add the input amount to the tilt while keeping the
+     gap and device center the same.  The tilt is defined as
+     DS - US"""
 
-def MoveDeviceTo (USU, USL, DSU, DSL, ELE):
+  # Because that is just easier
+  HalfTilt = IN / 2.0
+
+  # Grab starting values
+  Starting_USU = caget(PV_POSITION_US_UPPER)
+  Starting_USL = caget(PV_POSITION_US_LOWER)
+  Starting_DSU = caget(PV_POSITION_DS_UPPER)
+  Starting_DSL = caget(PV_POSITION_DS_LOWER)
+
+  # Move the device
+  MoveDeviceTo(Starting_USU - HalfTilt,
+               Starting_USL + HalfTilt,
+               Starting_DSU + HalfTilt,
+               Starting_DSL - HalfTilt,
+               None)
+
+  return
+
+
+def AddToTaper (IN):
+  """Add the input amount to the taper while keeping the
+     gap and device center the same.  The taper is defined as
+     GAP_DS - GAP_US"""
+
+  # Because that is just easier
+  QuarterTaper = IN / 4.0
+
+  # Grab starting values
+  Starting_USU = caget(PV_POSITION_US_UPPER)
+  Starting_USL = caget(PV_POSITION_US_LOWER)
+  Starting_DSU = caget(PV_POSITION_DS_UPPER)
+  Starting_DSL = caget(PV_POSITION_DS_LOWER)
+
+  # Move the device
+  MoveDeviceTo(Starting_USU - QuarterTaper,
+               Starting_USL - QuarterTaper,
+               Starting_DSU + QuarterTaper,
+               Starting_DSL + QuarterTaper,
+               None)
+
+  return
+
+
+def MoveDeviceTo (USU, USL, DSU, DSL, ELE=None):
   """Move the device to the specified location for all points.
      We will crab our way there if needed minding the PV_GIRDER_TILT_LIMIT and CRAB_LIMIT.
      I use USE and not DSE because it is just along for the ride (no feedback)"""
@@ -171,7 +242,7 @@ def MoveDeviceTo (USU, USL, DSU, DSL, ELE):
         Finished[3] = 1
 
   # Don't forget about elevation
-  if abs(ELE - This_USE) > 0.010:
+  if ELE is not None and abs(ELE - This_USE) > 0.010:
     Moves.append(['ELE', ELE])
 
   for move in Moves:
@@ -199,6 +270,8 @@ def MoveDeviceSequence (Moves):
      The list is processed in order.  Be aware that there is a girder tilt limit.  It is
      unchecked here.  Please do not hit the limit.
      """
+
+  print 'This function is currently disabled for testing'
   exit(0)
 
   # Loop over each move command
