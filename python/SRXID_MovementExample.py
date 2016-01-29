@@ -15,7 +15,7 @@ Moves = [
           ['DSU', 20.000],
           ['DSL', 20.000]
   ]
-MoveDeviceTo(Moves)
+MoveDeviceSequence(Moves)
 
 
 
