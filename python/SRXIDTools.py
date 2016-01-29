@@ -9,6 +9,12 @@ import time
 DEV = 'SR:C5-ID:G1'
 SYS = 'IVU21:1'
 
+# Amount of tilt allowed for attempted move
+CRAB_LIMIT = 0.050
+
+# Girder Tilt limit internal to pmac controller
+PV_GIRDER_TILT_LIMIT = DEV + '{' + SYS + '}GIRDER_TILT_LIMIT'
+
 # Serious tilt error readback
 PV_GIRDER_TILT_ERROR = DEV + '{' + SYS + ']GIRDER_TILT_ERROR'
 
@@ -70,6 +76,117 @@ PV_TEMPERATURES = [
   DEV + '{' + SYS + '-Pt:15}T',
   DEV + '{' + SYS + '-Pt:16}T'
 ]
+
+
+
+
+
+
+
+
+
+def MoveDeviceTo (USU, USL, DSU, DSL, ELE):
+  """Move the device to the specified location for all points.
+     We will crab our way there if needed minding the PV_GIRDER_TILT_LIMIT and CRAB_LIMIT.
+     I use USE and not DSE because it is just along for the ride (no feedback)"""
+
+  # Grab current positions
+  Starting_USU = caget(PV_POSITION_US_UPPER)
+  Starting_USL = caget(PV_POSITION_US_LOWER)
+  Starting_DSU = caget(PV_POSITION_DS_UPPER)
+  Starting_DSL = caget(PV_POSITION_DS_LOWER)
+  Starting_USE = caget(PV_ELEVATION_US)
+
+  # Calculate difference from current to desired (desire - current)
+  Diff_USU = USU - Starting_USU
+  Diff_USL = USL - Starting_USL
+  Diff_DSU = DSU - Starting_DSU
+  Diff_DSL = DSL - Starting_DSL
+  Diff_USE = DSL - Starting_USE
+
+  # Calculate tilt of each girder
+  Starting_Tilt_U = Starting_USU - Starting_DSU
+  Starting_Tilt_L = Starting_USL - Starting_DSL
+
+  # Variables to use for motion sequence
+  This_USU = Starting_USU
+  This_USL = Starting_USL
+  This_DSU = Starting_DSU
+  This_DSL = Starting_DSL
+
+  # Did we finish the crab walk calculation for each axis?
+  Finished = [0, 0, 0, 0]
+
+  # Calculate the moves using a max crab
+  while sum(Finished) != 4:
+    if not Finished[0]:
+      if abs(This_DSU - This_USU) < CRAB_LIMIT:
+        This_USU = USU
+        Finished[0] = 1
+      else:
+        if USU > Starting_USU:
+          This_USU = This_DSU + CRAB_LIMIT
+        else:
+          This_USU = This_DSU - CRAB_LIMIT
+      Moves.append(['USU', This_USU])
+
+    if not Finished[1]:
+      if abs(This_DSU - This_USU) < CRAB_LIMIT:
+        This_DSU = DSU
+        Finished[1] = 1
+      else:
+        if DSU > Starting_DSU:
+          This_DSU = This_USU + CRAB_LIMIT
+        else:
+          This_DSU = This_USU - CRAB_LIMIT
+      Moves.append(['DSU', This_DSU])
+
+    if not Finished[2]:
+      if abs(This_DSL - This_USL) < CRAB_LIMIT:
+        This_USL = USL
+        Finished[2] = 1
+      else:
+        if USL > Starting_USL:
+          This_USL = This_DSL + CRAB_LIMIT
+        else:
+          This_USL = This_DSL - CRAB_LIMIT
+      Moves.append(['USL', This_USL])
+
+    if not Finished[3]:
+      if abs(This_DSL - This_USL) < CRAB_LIMIT:
+        This_DSL = DSL
+        Finished[3] = 1
+      else:
+        if DSL > Starting_DSL:
+          This_DSL = This_USL + CRAB_LIMIT
+        else:
+          This_DSL = This_USL - CRAB_LIMIT
+      Moves.append(['DSL', This_DSL])
+
+
+      if Finished[0] == 0 and Finished[1] == 1:
+        Moves.append(['USU', USU])
+        Finished[0] = 1
+      if Finished[0] == 1 and Finished[1] == 0:
+        Moves.append(['DSU', DSU])
+        Finished[1] = 1
+      if Finished[2] == 0 and Finished[3] == 1:
+        Moves.append(['USL', USL])
+        Finished[2] = 1
+      if Finished[2] == 1 and Finished[3] == 0:
+        Moves.append(['DSL', DSL])
+        Finished[3] = 1
+
+  # Don't forget about elevation
+  if abs(ELE - caget(PV_ELEVATION_US) > 0.010:
+    Moves.append(['ELE', ELE])
+  print Moves
+
+
+  return
+
+
+
 
 
 
