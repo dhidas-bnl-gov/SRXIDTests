@@ -192,7 +192,8 @@ def MoveDeviceTo (USU, USL, DSU, DSL, ELE=None):
           This_USU = This_DSU + CRAB_LIMIT
         else:
           This_USU = This_DSU - CRAB_LIMIT
-      Moves.append(['USU', This_USU])
+      MoveDeviceTo( [['USU', This_USU]] )
+      This_USU = caget(PV_POSITION_US_UPPER)
 
     if not Finished[1]:
       if abs(DSU - This_USU) < CRAB_LIMIT:
@@ -203,7 +204,8 @@ def MoveDeviceTo (USU, USL, DSU, DSL, ELE=None):
           This_DSU = This_USU + CRAB_LIMIT
         else:
           This_DSU = This_USU - CRAB_LIMIT
-      Moves.append(['DSU', This_DSU])
+      MoveDeviceTo( [['DSU', This_DSU]] )
+      This_USU = caget(PV_POSITION_DS_UPPER)
 
     if not Finished[2]:
       if abs(This_DSL - USL) < CRAB_LIMIT:
@@ -214,7 +216,8 @@ def MoveDeviceTo (USU, USL, DSU, DSL, ELE=None):
           This_USL = This_DSL + CRAB_LIMIT
         else:
           This_USL = This_DSL - CRAB_LIMIT
-      Moves.append(['USL', This_USL])
+      MoveDeviceTo( [['USL', This_USL]] )
+      This_USL = caget(PV_POSITION_US_LOWER)
 
     if not Finished[3]:
       if abs(DSL - This_USL) < CRAB_LIMIT:
@@ -225,30 +228,54 @@ def MoveDeviceTo (USU, USL, DSU, DSL, ELE=None):
           This_DSL = This_USL + CRAB_LIMIT
         else:
           This_DSL = This_USL - CRAB_LIMIT
-      Moves.append(['DSL', This_DSL])
+      MoveDeviceTo( [['DSL', This_DSL]] )
+      This_DSL = caget(PV_POSITION_DS_LOWER)
 
 
+      # Last moves for an axis
       if Finished[0] == 0 and Finished[1] == 1:
-        Moves.append(['USU', USU])
+        MoveDeviceTo( [['USU', This_USU]] )
+        This_USU = caget(PV_POSITION_US_UPPER)
         Finished[0] = 1
       if Finished[0] == 1 and Finished[1] == 0:
-        Moves.append(['DSU', DSU])
+        MoveDeviceTo( [['DSU', This_DSU]] )
+        This_DSU = caget(PV_POSITION_DS_UPPER)
         Finished[1] = 1
       if Finished[2] == 0 and Finished[3] == 1:
-        Moves.append(['USL', USL])
+        MoveDeviceTo( [['USL', This_USL]] )
+        This_USL = caget(PV_POSITION_US_LOWER)
         Finished[2] = 1
       if Finished[2] == 1 and Finished[3] == 0:
-        Moves.append(['DSL', DSL])
+        MoveDeviceTo( [['DSL', This_DSL]] )
+        This_DSL = caget(PV_POSITION_DS_LOWER)
         Finished[3] = 1
 
   # Don't forget about elevation
   if ELE is not None and abs(ELE - This_USE) > 0.010:
     Moves.append(['ELE', ELE])
+    MoveDeviceTo( [['ELE', ELE]] )
+    This_ELE = caget(PV_ELEVATION_US)
 
-  for move in Moves:
-    print move
 
-  return
+  # Check to see how close we are
+  Final_USU = caget(PV_POSITION_US_UPPER)
+  Final_USL = caget(PV_POSITION_US_LOWER)
+  Final_DSU = caget(PV_POSITION_DS_UPPER)
+  Final_DSL = caget(PV_POSITION_DS_LOWER)
+  Final_USE = caget(PV_ELEVATION_US)
+
+  # Define the acceptable tolerance:
+  Tolerance_Gap = 0.003
+  Tolerance_Ele = 0.010
+
+  # Check to see that we are within the givel tolerance
+  if abs(Final_USU - USU) > Tolerance_Gap or abs(Final_USL - USL) > Tolerance_Gap or abs(Final_DSU - DSU) > Tolerance_Gap or abs(Final_DSL - DSL) > Tolerance_Gap:
+    return False
+  if ELE is not None:
+    if abs(Final_USE - ELE) > Tolerance_Ele:
+      return False
+
+  return True
 
 
 
